@@ -1,0 +1,25 @@
+# Created by Quickstart wizard.
+formatVersion: 1
+inputs:
+  networkType:
+    type: string
+    enum:
+      - existing
+      - public
+      - private
+      - outbound
+      - routed
+    description: Network Type
+  networkCidr:
+    type: string
+    description: CIDR specification for the creation of subnet when applicable
+    default: ''
+resources:
+  Provider_Network_1:
+    type: Cloud.NSX.Network
+    properties:
+      name: QS-Network
+      networkType: '${input.networkType}'
+      networkCidr: '${input.networkCidr}'
+      constraints:
+        - tag: 'quick_start:20191024-015450'
