@@ -1,0 +1,7 @@
+---
+- hosts: workers
+  tasks:
+    - name: Testing vRA variables
+      lineinfile:
+        path: /etc/ansible/test-vra8-vars.txt
+        line: "{{worker_node_ip}}"
