@@ -1,15 +1,17 @@
 ---
-- hosts: all
+- hosts: masters
   become: yes
   tasks:
    - name: Disable SWAP since kubernetes can't work with swap enabled (1/2)
      shell: |
        swapoff -a
+
    - name: Disable SWAP in fstab since kubernetes can't work with swap enabled (2/2)
      replace:
        path: /etc/fstab
        regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
        replace: '# \1'
+       
    - name: install Docker
      apt:
        name: docker.io
@@ -42,10 +44,7 @@
      apt:
        name: kubeadm=1.14.0-00
        state: present
-
-- hosts: masters
-  become: yes
-  tasks:
+       
    - name: install kubectl
      apt:
        name: kubectl=1.14.0-00
