@@ -3,7 +3,7 @@
   become: yes
   gather_facts: false
   vars:
-    join_command: "{{ lookup('file','/tmp/join_command.txt') }}"
+    join_command: "{{ lookup('file','/etc/ansible/join_command.txt') }}"
   tasks:
     - name: join cluster
       shell: "{{ join_command }}"
