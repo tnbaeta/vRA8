@@ -31,3 +31,19 @@
       args:
         chdir: $HOME
         creates: pod_network_setup.txt
+
+    - name: Create kubernetes join command variable
+      shell: kubeadm token create --print-join-command
+      register: JOIN_COMMAND
+
+    - name: Create join commmand file
+      copy:
+        dest: "/tmp/join_command.txt"
+        content: |
+                {{ JOIN_COMMAND.stdout }}
+                
+    - name: copy the file to ansible controller
+      fetch:
+        src: /tmp/join_command.txt
+        dest: /etc/ansible/join_command.txt
+        flat: yes
