@@ -1,0 +1,6 @@
+---
+- hosts: tests
+  task:
+    - name: capture output of whoami command
+      command: whoami
+      register: login
