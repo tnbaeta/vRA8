@@ -2,8 +2,22 @@
 - hosts: masters
   become: yes
   tasks:
-   - name: install Docker
-     yum:
-       name: docker.io
-       state: present
-       update_cache: true
+    - name: Install Dcoker required packages
+      yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - device-mapper-persistent-data
+          - lvm2
+
+    - name: Add Docker Repository
+      yum_repository:
+        name: docker-ce
+        description: Docker Community YUM Repository
+        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+
+    - name: install Docker
+      yum:
+      name: docker-ce
+      state: latest
+      update_cache: true
