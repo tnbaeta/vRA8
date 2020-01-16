@@ -13,9 +13,10 @@
 
     - name: Add Docker Repository
       yum_repository:
-        name: docker-ce
-        description: Docker Community YUM Repository
-        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+        name: Docker CE Stable - $basearch
+        baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+        gpgcheck: yes
+        gpgkey: https://download.docker.com/linux/centos/gpg
 
     - name: install Docker
       yum:
