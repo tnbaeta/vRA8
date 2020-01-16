@@ -20,4 +20,4 @@
       yum:
         name: docker-ce
         state: latest
-        cat //update_cache: true
+        update_cache: true
