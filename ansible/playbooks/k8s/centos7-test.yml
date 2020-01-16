@@ -3,7 +3,7 @@
   become: yes
   tasks:
    - name: install Docker
-     yum:
+     dnf:
        name: docker.io
        state: present
        update_cache: true
