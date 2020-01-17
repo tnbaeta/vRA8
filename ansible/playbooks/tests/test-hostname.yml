@@ -4,7 +4,7 @@
   vars:
     ipv4_addr: "{{ ansible_default_ipv4.address }}"
   vars_files:
-    - "/etc/ansible/vRA8/ansible/{{ ipv4_addr }}host_vars/vra_user_host_vars.yml"
+    - "/etc/ansible/vRA8/ansible/{{ ipv4_addr }}/host_vars/vra_user_host_vars.yml"
 
   tasks:
     name: Set hostname
