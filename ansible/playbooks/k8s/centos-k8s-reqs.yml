@@ -1,0 +1,64 @@
+- hosts: all
+  become: yes
+  gather_facts: no
+
+  tasks:
+    # Disable SWAP
+    - name: Disable SWAP imediatelly
+      shell: |
+        swapoff -a
+
+    - name: Disable swap in fstab
+      replace:
+        path: /etc/fstab
+        regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+        replace: '# \1'
+
+    # Disbale SELinux
+    - name: Disable SELinux imediatelly
+      shell: |
+        setenforce 0
+
+    - name: Disable SELinux in config file
+      shell: |
+        sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+        
+    # Install Docker Community Edition
+    - name: Install Docker CE required packages
+      yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+
+    - name: Add Docker Repository
+      yum_repository:
+        name: Docker CE Stable - $basearch
+        description: Docker CE Stable Repository
+        baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+        gpgcheck: yes
+        gpgkey: https://download.docker.com/linux/centos/gpg
+
+    - name: Install Docker CE
+      yum:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    # Install Kubernetes
+    - name: Add Kubernetes Repository
+      yum_repository:
+        name: Kubernetes
+        description: Kubernetes Upstream Repository
+        baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        gpgcheck: yes
+        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+    - name: Install kube packages
+        yum:
+          name:
+            - kubelet
+            - kubeadm
+            - kubectl
