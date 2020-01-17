@@ -1,10 +1,12 @@
 - hosts: masters
   become: yes
-  gather_facts: no
+  gather_facts: yes
+  vars:
+    ipv4_addr: "{{ ansible_default_ipv4.address }}"
   vars_files:
-    - /etc/ansible/vRA8/ansible/host_vars/vra_user_host_vars.yml
+    - "/etc/ansible/vRA8/ansible/{{ ipv4_addr }}host_vars/vra_user_host_vars.yml"
 
   tasks:
     name: Set hostname
       shell: |
-        hostnamectl set-hostname "{{ vm-hostname }}"
+        hostnamectl set-hostname "{{ vra_hostname }}"
