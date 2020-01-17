@@ -7,6 +7,6 @@
     - "/etc/ansible/vRA8/ansible/{{ ipv4_addr }}/host_vars/vra_user_host_vars.yml"
 
   tasks:
-    name: Set hostname
+    - name: Set hostname
       shell: |
         hostnamectl set-hostname "{{ vra_hostname }}"
