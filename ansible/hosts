@@ -1,3 +1,4 @@
 localhost
-[masters]
-[workers]
+[k8s-masters]
+[k8s-workers]
+[tomcat-nodes]
