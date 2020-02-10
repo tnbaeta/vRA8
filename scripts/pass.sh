@@ -3,10 +3,10 @@
 
 # Default values of arguments
 PASSWORD=""
-IP_ADDR=""
 FILE=""
-CATALINA_HOME=""
+IP_ADDR=""
 ARTIFACT=""
+CATALINA_HOME=""
 # Loop through arguments and process them
 for arg in "$@"
 do
@@ -15,20 +15,22 @@ do
         PASSWORD="$2"
         shift # Remove --initialize from processing
         ;;
+        -f|--file)
+				FILE="$4"
+				shift
+				;;
     		-i|--ip-addr)
 				IP_ADDR="$3"
 				shift
 				;;
-				-f|--file)
-				FILE="$4"
+				-a|--artifact)
+				ARTIFACT="$5"
 				shift
 				;;
 				-c|--catalina-home)
-				CATALINA_HOME="$5"
+				CATALINA_HOME="$6"
 				shift
 				;;
-				-a|--artifact)
-				
     esac
 done
 
@@ -46,6 +48,10 @@ keyScan() {
 
 keyCopy() {
 	sshpass -f "$FILE" ssh-copy-id "$IP_ADDR"
+}
+
+copyArtifact() {
+	scp "$ARTIFACT" "$IP_ADDR":"$CATALINA_HOME"/webapps
 }
 
 createFile
