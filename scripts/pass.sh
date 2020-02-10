@@ -6,6 +6,7 @@ PASSWORD=""
 IP_ADDR=""
 FILE=""
 CATALINA_HOME=""
+ARTIFACT=""
 # Loop through arguments and process them
 for arg in "$@"
 do
@@ -14,7 +15,7 @@ do
         PASSWORD="$2"
         shift # Remove --initialize from processing
         ;;
-    		-a|--ip-addr)
+    		-i|--ip-addr)
 				IP_ADDR="$3"
 				shift
 				;;
@@ -26,6 +27,8 @@ do
 				CATALINA_HOME="$5"
 				shift
 				;;
+				-a|--artifact)
+				
     esac
 done
 
@@ -34,15 +37,15 @@ createFile() {
 }
 
 genKey() {
-	ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsaTemp <<< y
+	ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa <<< y
 }
 
 keyScan() {
-	ssh-keyscan -H "$IP_ADDR" >> ~/.ssh/known_hostsTemp
+	ssh-keyscan -H "$IP_ADDR" >> ~/.ssh/known_hosts
 }
 
 keyCopy() {
-	sshpass -f "$FILE" ssh-copy-id "$IP_ADDR":"$CATALINA_HOME"/webapps
+	sshpass -f "$FILE" ssh-copy-id "$IP_ADDR"
 }
 
 createFile
