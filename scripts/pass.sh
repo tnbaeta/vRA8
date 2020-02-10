@@ -7,6 +7,7 @@ FILE=""
 IP_ADDR=""
 ARTIFACT=""
 CATALINA_HOME=""
+
 # Loop through arguments and process them
 for arg in "$@"
 do
@@ -16,11 +17,11 @@ do
         shift # Remove --initialize from processing
         ;;
         -f|--file)
-				FILE="$4"
+				FILE="$3"
 				shift
 				;;
     		-i|--ip-addr)
-				IP_ADDR="$3"
+				IP_ADDR="$4"
 				shift
 				;;
 				-a|--artifact)
