@@ -59,3 +59,4 @@ createFile
 genKey
 keyScan
 keyCopy
+copyArtifact
