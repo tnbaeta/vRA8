@@ -1,0 +1,118 @@
+formatVersion: 1
+name: vSphere Linux VM
+version: 1.0
+inputs:
+  os:
+    type: string
+    title: Sistema Operacional
+    description: Escolha o sistema operacional.
+    oneOf:
+      - title: CentOS 7.x
+        const: linux-centos7
+      - title: CentOS 8.x
+        const: linux-centos8
+      - title: Red Hat Enterprise Server 7.x
+        const: linux-redhat7
+      - title: Red Hat Enterprise Server 8.x
+        const: linux-redhat8
+      - title: Ubuntu Server 18.04
+        const: linux-ubuntu1804
+      - title: Ubuntu Server 20.04
+        const: linux-ubuntu2004
+    default: linux-centos7
+  cpu:
+    type: number
+    title: CPU
+    description: Escolha a quantidade de vCPU.
+    default: 1
+  mem:
+    type: number
+    title: Memória (GB)
+    description: Escolha a quantidade de memória em Gigabytes.
+    default: 2
+  role:
+    type: string
+    title: Função
+    description: Selecione a função da VM.
+    oneOf:
+      - title: Applicação
+        const: APP
+      - title: Banco de Dados
+        const: DB
+      - title: Infraestrutura
+        const: INFRA
+      - title: Web
+        const: WEB
+    default: WEB
+  environment:
+    type: string
+    title: Ambiente
+    description: Selecione o ambiente para provisionamento da VM.
+    oneOf:
+      - title: Desenvolvimento
+        const: environment:dev
+      - title: Produção
+        const: environment:prod
+      - title: Teste
+        const: environment:test
+    default: environment:dev
+  disks-add:
+    type: boolean
+    title: Adicionar Discos?
+    description: Escolha se deseja adicionar discos na VM.
+    default: false
+  disk:
+    type: array
+    title: 'Disco(s):'
+    description: Configure o(s) disco(s) adicionais.
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+          title: Nome
+          description: Digite um nome para o disco.
+        capacity:
+          type: integer
+          title: Tamanho (GB)
+          description: Escolha o tamnho do disco em Gigabytes.
+    maxItems: 4
+    default: ''
+resources:
+  disk:
+    type: Cloud.vSphere.Disk
+    properties:
+      name: ${input.disk[count.index].name}
+      capacityGb: ${input.disk[count.index].capacity}
+      constraints:
+        - tag: '${contains(input.environment, "prod") ? "storage:prod" : (contains(input.environment, "dev") ? "storage:dev" : "storage:test")}'
+      count: ${length(input.disk)}
+  vm:
+    type: Cloud.vSphere.Machine
+    properties:
+      name: '${(contains(input.os, "linux") ? "LNX" : "WIN") + input.role + to_upper(substring(env.projectName, 0, 3)) + to_upper(substring(input.environment, 12, 15))}'
+      image: ${input.os}
+      cpuCount: ${input.cpu}
+      totalMemoryMB: ${input.mem * 1024}
+      constraints:
+        - tag: ${input.environment}
+      remoteAccess:
+        authentication: usernamePassword
+        username: root
+        password: VMware1!
+      networks:
+        - network: ${resource.net.id}
+          assignment: static
+      cloudConfig: |
+        #cloud-config
+        hostname: ${self.resourceName}
+        fqdn: ${self.resourceName + "." + resource.net.domain}
+      attachedDisks: ${map_to_object(resource.disk[*].id, "source")}
+  net:
+    type: Cloud.vSphere.Network
+    properties:
+      networkType: existing
+      constraints:
+        - tag: network.model:existing
+        - tag: '${"network.name:" + (contains(input.environment, "dev") ? "dev" : (contains(input.environment, "prod")? "prod" : "test"))}'
+
